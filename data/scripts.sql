@@ -30,6 +30,20 @@ GROUP BY specialty_description
 ORDER BY total_opioid_claims DESC
 -- Nurse Practitioner 900
 
+SELECT specialty_description, (total_claim_count / 
+    (SELECT total_claim_count
+    FROM prescription AS p1
+    INNER JOIN drug AS d1
+    ON p1.drug_name = d1.drug_name
+    WHERE opioid_drug_flag = 'Y')) AS subq
+FROM prescription AS p1
+INNER JOIN drug AS d1
+ON p1.drug_name = d1.drug_name 
+INNER JOIN prescriber AS p2
+ON p1.npi = p2.npi
+
+
+
 SELECT generic_name, SUM(total_drug_cost) AS total_cost
 FROM drug as d1
 INNER JOIN prescription AS p1
@@ -130,22 +144,8 @@ WHERE total_claim_count >= 3000 AND opioid_drug_flag = 'Y'
 SELECT specialty_description, npi, drug_name
 FROM prescriber AS p1
 CROSS JOIN drug AS d1
-WHERE nppes_provider_city = 'NASHVILLE' AND opioid_drug_flag = 'Y'
+WHERE nppes_provider_city = 'NASHVILLE' AND opioid_drug_flag = 'Y' AND specialty_description = 'Pain Management'
 
-SELECT specialty_description, npi, drug_name
-FROM prescriber AS p1
-CROSS JOIN drug AS d1
-WHERE nppes_provider_city = 'NASHVILLE' AND opioid_drug_flag = 'Y'
-
-
-
-
-
-SELECT total_claim_count, p1.npi, p2.drug_name
-FROM prescriber AS p1
-CROSS JOIN drug AS d1
-RIGHT JOIN prescription AS p2
-ON p1.npi = p2.npi
 
 
 
