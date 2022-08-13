@@ -53,6 +53,8 @@ ORDER BY total_cost DESC
 -- GROUP BY generic_name
 -- ORDER BY total_cost DESC
 
+
+
 SELECT drug_name,
 CASE WHEN opioid_drug_flag = 'Y' THEN 'opioid'
      WHEN antibiotic_drug_flag = 'Y' THEN 'antibiotic'
@@ -94,6 +96,17 @@ GROUP BY cbsa
 ORDER BY total_pop DESC
 -- Highest Total pop - "34980"  1830410
 -- Smallest Total pop - "34100"  116352
+
+SELECT cbsa, SUM(population) AS total_pop
+FROM cbsa AS cb
+INNER JOIN population AS pop
+ON cb.fipscounty = pop.fipscounty
+INNER JOIN fips_county AS fc
+ON cb.fipscounty = fc.fipscounty
+WHERE state = 'TN'
+GROUP BY cbsa
+ORDER BY total_pop DESC
+
 
 
 
