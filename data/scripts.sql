@@ -40,11 +40,12 @@ ORDER BY total_opioid_claims DESC
 
 
 -- Challenge Question 2C
-SELECT specialty_description, drug_name
+SELECT p1.specialty_description, SUM(p2.total_claim_count)
 FROM prescriber as p1
 LEFT JOIN prescription as p2
-ON p1.npi = p2.npi
-WHERE drug_name IS NULL
+USING (NPI)
+GROUP BY p1.specialty_description
+HAVING SUM(p2.total_claim_count) IS NULL
 
 
 -- Difficult Bonus 2D
@@ -66,6 +67,7 @@ LEFT JOIN
     WHERE opioid_drug_flag = 'Y'
     GROUP BY specialty_description) as subq2
 ON subq1.specialty_description = subq2.specialty_description
+ORDER BY percentage_opioid_claims DESC
 -- "Case Manager/Care Coordinator"
 -- "Orthopaedic Surgery"
 -- "Interventional Pain Management"
@@ -191,7 +193,7 @@ AND specialty_description = 'Pain Management'
 
 
 -- 7B and C
-SELECT p1.npi, d1.drug_name, COALESCE(total_claim_count,0)
+SELECT p1.npi, d1.drug_name, COALESCE(total_claim_count,0) as opioidclaims_bydrug_bynpi
 FROM prescriber AS p1
 CROSS JOIN drug AS d1
 LEFT JOIN prescription as p2
@@ -199,7 +201,7 @@ ON p1.npi = p2.npi AND d1.drug_name = p2.drug_name
 WHERE nppes_provider_city = 'NASHVILLE' 
 AND opioid_drug_flag = 'Y' 
 AND specialty_description = 'Pain Management'
-
+ORDER BY p1.npi
 
 
 
